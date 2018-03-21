@@ -1,6 +1,25 @@
 
 # Developing Ethereum Smart Contracts 
 
+## Remix IDE
+Remix es un IDE basado en navegador creado por el equipo de desarrollo de Ethereum. Puede optar por instalarlo localmente a través del repositorio en el repositorio de Github, o simplemente visitar la versión en línea en http://remix.ethereum.org. Para este curso, vamos a usar la versión en línea.
+
+
+## Conceptos básicos de contrato inteligente
+
+La primera vez que visita Remix IDE, le presenta una muestra de contrato inteligente. No queremos eso, vamos a crear el nuestro desde cero.
+
+Haga clic en el ícono (+) en la parte superior izquierda del editor para crear un nuevo contrato inteligente. Llámalo "MyContract.sol", o lo que desees.
+
+Comience por escribir (o pegar) el siguiente código:
+```
+pragma solidity ^0.4.18;
+
+contract Coursetro {
+    
+}
+```
+
 ## Smart Contract Variables & Types
 
 El concepto más simple en cualquier idioma es la variable. Debido a que Solidity está tipada estáticamente (es decir, el tipo de la variable debe definirse antes del tiempo de compilación), debe especificar el tipo de la variable.
