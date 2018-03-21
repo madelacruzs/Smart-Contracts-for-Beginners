@@ -59,7 +59,7 @@ En Solidity se define una variable especificando primero su tipo.
   A dynamically signed string.
 
 * **mapping**
-  Hash tables with key types and value types. We will look at mappings more in depth later on in the course.
+  Hash tables with key types and value types.
 
 * **struct**
   Structs allow you to define new types. We will also cover this more in depth shortly
