@@ -15,7 +15,7 @@ Comience por escribir (o pegar) el siguiente código:
 ```
 pragma solidity ^0.4.18;
 
-contract Coursetro {
+contract MyContract {
     
 }
 ```
@@ -29,7 +29,7 @@ Vamos a definir una variable **string** en nuestro contrato:
 ```
 pragma solidity ^0.4.18;
 
-contract Demo {
+contract MyContract {
     
    string fName = 'Miguel';
     
@@ -69,7 +69,7 @@ Vamos a definir mi edad. Nadie puede tener una edad negativa, por lo que utiliza
 ```
 pragma solidity ^0.4.18;
 
-contract Demo {
+contract MyContract {
     
    string fName = 'Miguel';
    uint age = 18; // :)
