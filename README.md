@@ -1,11 +1,11 @@
-# Smart-Contracts-for-Beginners
-Developing Ethereum Smart Contracts for Beginners
 
-##Smart Contract Variables & Types
+# Developing Ethereum Smart Contracts 
 
-The most simple concept in any language is the variable. Because Solidity is statically typed (that is, the type of the variable must be defined before compile time), you must specify the type of the variable.
+## Smart Contract Variables & Types
 
-Let's define a string variable in our contract:
+El concepto más simple en cualquier idioma es la variable. Debido a que Solidity está tipada estáticamente (es decir, el tipo de la variable debe definirse antes del tiempo de compilación), debe especificar el tipo de la variable.
+
+Vamos a definir una variable **string** en nuestro contrato:
 
 ```
 pragma solidity ^0.4.18;
@@ -17,9 +17,9 @@ contract Demo {
 }
 ```
 
-In Solidity, you define a variable by first specifying its type.
+En Solidity se define una variable especificando primero su tipo.
 
-What other types are there?
+¿Qué otros tipos hay?
 
 * **bool**
   This is a Boolean, which returns true or false.
@@ -45,7 +45,7 @@ What other types are there?
 * **struct**
   Structs allow you to define new types. We will also cover this more in depth shortly
 
- Let's also define my age. No one can have a negative age, so we will use an unsigned integer for this:
+Vamos a definir mi edad. Nadie puede tener una edad negativa, por lo que utilizaremos un entero sin signo para esto (**uint**):
 
 ```
 pragma solidity ^0.4.18;
@@ -59,7 +59,7 @@ contract Demo {
 ```
 
 ## Public and Private
-Solidity has four types of visibilities for both functions and variables:
+Solidity tiene cuatro tipos de visibilidades para funciones y variables:
 
 **Public**
 This allows you to define functions or variables that can be called internally or through messages.
@@ -77,7 +77,7 @@ Let's add the public visibility to our variables:
 ```
 pragma solidity ^0.4.18;
 
-contract Demo {
+contract MyContract {
     
    string public fName = 'Miguel';
    uint public age = 18; // :)
@@ -86,19 +86,17 @@ contract Demo {
 ```
 
 ## Smart Contract Constructor
-Every smart contract has a constructor function. This constructor is called when a contract is created. Inside of it, you can define the values of variables.
-
-Let's re-adjust our code to work with a constructor:
+Cada contrato inteligente tiene una función de constructor. Se llama a este constructor cuando se crea un contrato. En su interior, puede definir los valores de las variables.
 
 ```
 pragma solidity ^0.4.18;
 
-contract Demo {
+contract MyContract {
     
    string public fName;
    uint public age;
    
-   function Coursetro() public {
+   function MyContract() public {
        fName = 'Miguel';
        age = 18;
    }
@@ -107,19 +105,18 @@ contract Demo {
 ```
 
 ## Constant Variables
-Variables can be declared as being constant. As the name suggests, these are variables with a constant value that does not change.
+Las variables se pueden declarar como constantes. Como su nombre indica, estas son variables con un valor constante que no cambia.
 
-Let's transform the fName variable to a constant variable:
 
 ```
 pragma solidity ^0.4.18;
 
-contract Demo {
+contract MyContract {
     
    string constant fName = 'Miguel';
    uint public age;
    
-   function Coursetro() public {
+   function MyContract() public {
        fName = 'Miguel';
        age = 18;
    }
@@ -128,28 +125,25 @@ contract Demo {
 ```
 
 ## Setting Variables
-Our smart contract at this point is pretty boring. Let's integrate a potential user interaction where we can manually define a Coursetro Instructor's name and age.
-
-Paste the following:
+Nuestro contrato inteligente en este momento es bastante aburrido. Vamos a integrar una posible interacción del usuario donde podamos definir manualmente el nombre y la edad de alguien humano :P 
 
 
 ```
 pragma solidity ^0.4.18;
 
-contract MMContract {
+contract MyContract {
     
    string fName;
    uint age;
    
-   function setInstructor(string _fName, uint _age) public {
+   function setHuman(string _fName, uint _age) public {
        fName = _fName;
        age = _age;
    }
    
-   function getInstructor() public constant returns (string, uint) {
+   function getHuman() public constant returns (string, uint) {
        return (fName, age);
    }
     
 } 
-}
 ```
