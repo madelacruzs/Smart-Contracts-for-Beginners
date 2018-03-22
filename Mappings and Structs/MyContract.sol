@@ -11,7 +11,7 @@ contract MyContract {
     mapping (address => TheHuman) humanes;
     address[] public humanAccts;
     
-    function setInstructor(address _address, uint _age, string _fName, string _lName) public {
+    function setHuman(address _address, uint _age, string _fName, string _lName) public {
         var thehuman = humanes[_address];
         
         thehuman.age = _age;
@@ -21,15 +21,15 @@ contract MyContract {
         humanAccts.push(_address)-1;
     }
     
-    function getInstructors() view public returns(address[]) {
+    function getHumans() view public returns(address[]) {
         return humanAccts;
     }
     
-    function getInstructor(address _address) view public returns (uint, string, string) {
+    function getHuman(address _address) view public returns (uint, string, string) {
         return (humanes[_address].age, humanes[_address].fName, humanes[_address].lName);
     }
     
-    function countInstructors() view public returns (uint) {
+    function countHumans() view public returns (uint) {
         return humanAccts.length;
     }
     
