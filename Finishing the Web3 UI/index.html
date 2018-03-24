@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MACS Smart Contract</title>
+    <title>Demo Smart Contract Ethereum - Solidity</title>
 
     <link rel="stylesheet" type="text/css" href="main.css">
 
-    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <script src="../node_modules/web3/dist/web3.min.js"></script>
 
 </head>
 <body>
     <div class="container">
-
-        <h1>MACS The Human</h1>
+        <h1>MACS El Humano</h1>
         <span id="countIns"></span>
 
         <h2 id="human"></h2>
@@ -23,62 +22,68 @@
 
         <img id="loader" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif">
 
-        <label for="fName" class="col-lg-2 control-label">First Name</label>
+        <label for="fName" class="col-lg-2 control-label">Nombre</label>
         <input id="fName" type="text">
 
-        <label for="lName" class="col-lg-2 control-label">Last Name</label>
+        <label for="lName" class="col-lg-2 control-label">Apellidos</label>
         <input id="lName" type="text">
 
-        <label for="age" class="col-lg-2 control-label">Human Age</label>
+        <label for="age" class="col-lg-2 control-label">Edad</label>
         <input id="age" type="text">
 
-        <button id="button">Update The Human</button>
+        <button id="button">Actualizar </button>
 
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 
     <script>
-       if (typeof web3 !== 'undefined') {
-           web3 = new Web3(web3.currentProvider);
-       } else {
-           web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-       }
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/'));
+            // web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
-       web3.eth.defaultAccount = web3.eth.accounts[0];
+        }
 
-      var mycontractContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"_fName","type":"string"},{"name":"_age","type":"uint256"}],"name":"setHuman","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"age","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getHuman","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"fName","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"}]);
+        // web3.eth.defaultAccount = web3.eth.accounts[0];
+        web3.eth.defaultAccount = "0x8e7eb9b1960abfed2e525932a03a15e3f72b8a02";
 
-        var MACSContract = mycontractContract.at('0x0dcd2f752394c41875e259e00bb44fd505297caf');
+        var mycontractContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_age","type":"uint256"},{"name":"_fName","type":"string"},{"name":"_lName","type":"string"}],"name":"setHuman","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_address","type":"address"}],"name":"getHuman","outputs":[{"name":"","type":"uint256"},{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getHumans","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"countHumans","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"humanAccts","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"fName","type":"string"},{"indexed":false,"name":"lName","type":"string"},{"indexed":false,"name":"age","type":"uint256"}],"name":"humanInfo","type":"event"}]);
+        var MACSContract = mycontractContract.at('0x58a9abdfb1c20498099f26b139128e095ca5ab05');
 
-        var theHumanEvent = MACSContract.TheHuman();
+        var theHumanEvent = MACSContract.humanInfo({}, 'latest');
 
-
-       theHumanEvent.watch(function(error, result) {
-           if (result) {
-               if (result.blockHash != $("#insTrans").html())
+        theHumanEvent.watch((error, result) => {
+            if (result) {
+                if (result.blockHash != $("#insTrans").html()){
                     $("#loader").hide();
-
+                }
+                        
                 $("#insTrans").html('Block hash: ' + result.blockHash);
-               $("#human").html(web3.toAscii(result.args.fName) + ' ' + web3.toAscii(result.args.lName) + ' (' + result.args.age + ' years old)');
-           } else {
+                //$("#human").html(web3.toAscii(result.args.fName) + ' ' + web3.toAscii(result.args.lName) + ' (' + result.args.age + ' years old)');
+            } else {
+                console.log(error);
                 $("#loader").hide();
-           }
-       });
+            }
+        });
 
-       MACSContract.countHumans((err, res) => {
-           if (res)
-            $("#countIns").html(res.c + ' Humans');
-       })
+        MACSContract.countHumans((err, res) => {
+            console.log(res);
+            if (res)
+                $("#countIns").html(res.c + ' Humans');
+        })
 
-       $("#button").click(function() {
+        $("#button").click(function() {
             $("#loader").show();
             MACSContract.setHuman(web3.eth.defaultAccount, $("#age").val(), $("#fName").val(), $("#lName").val(), (err, res) => {
-               if (err) {
-                   $("#loader").hide();
-               }
-           });
-       });
+                if (err) {
+                    $("#loader").hide();
+                }
+                console.log(err);
+                console.log(res);
+            });
+        });
 
     </script>
 

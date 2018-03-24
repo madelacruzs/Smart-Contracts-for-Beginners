@@ -5,10 +5,7 @@ contract MyContract {
     string fName;
     uint age;
    
-    event TheHuman(
-       string name,
-       uint age
-    );
+    event TheHuman(string name, uint age);
 
     function setHuman(string _fName, uint _age) public {
         fName = _fName;

@@ -1,0 +1,11 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "course",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo"
+  },
+  "author": "",
+  "license": "ISC"
+}
