@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 contract MyContract {
     
@@ -27,7 +27,7 @@ contract MyContract {
         humanAccts.push(_address)-1;
         emit humanInfo(_fName, _lName, _age);
     }
-    
+
     function getHumans() view public returns(address[]) {
         return humanAccts;
     }

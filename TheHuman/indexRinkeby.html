@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo Smart Contract Ethereum - Solidity</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="../node_modules/web3/dist/web3.min.js"></script>
+	<link rel='shortcut icon' type='image/x-icon' href='https://raw.githubusercontent.com/ethereum/ethereum-org/master/public/images/favicon.ico' />
+
+</head>
+<body>
+    <div class="container">
+        <h1>MACS El Humano</h1>
+        <span id="countIns"></span>
+
+        <h2 id="human"></h2>
+        <span id="insTrans"></span>
+        <hr>
+        <label for="faddress" class="col-lg-2 control-label">Tu nombre se registrará con el siguiente address: <b id="ethAddress"></b></label>
+
+        <hr>
+        <img id="loader" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif">
+
+        <label for="fName" class="col-lg-2 control-label">Nombre</label>
+        <input id="fName" type="text">
+
+        <label for="lName" class="col-lg-2 control-label">Apellidos</label>
+        <input id="lName" type="text">
+
+        <label for="age" class="col-lg-2 control-label">Edad</label>
+        <input id="age" type="text">
+
+        <button id="button">Actualizar </button>
+
+    </div>
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="    crossorigin="anonymous"></script>
+    
+    <script>
+
+    window.addEventListener('load', function() {
+
+        // if (typeof web3 !== 'undefined') {
+        //     web3 = new Web3(Web3.currentProvider);
+        // } else {
+        //     //  web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        // }
+        web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/KEY'));
+
+         loadMyDAPP();
+    });
+
+    function loadMyDAPP(){
+
+        // web3.eth.defaultAccount = web3.eth.accounts[0];
+        web3.eth.defaultAccount = "0x8e7eb9b1960abfed2e525932a03a15e3f72b8a02";
+        
+        var myContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_age","type":"uint256"},{"name":"_fName","type":"string"},{"name":"_lName","type":"string"}],"name":"setHumanWithout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_age","type":"uint256"},{"name":"_fName","type":"string"},{"name":"_lName","type":"string"}],"name":"setHuman","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_address","type":"address"}],"name":"getHuman","outputs":[{"name":"","type":"uint256"},{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getHumans","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"countHumans","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"humanAccts","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"fName","type":"string"},{"indexed":false,"name":"lName","type":"string"},{"indexed":false,"name":"age","type":"uint256"}],"name":"humanInfo","type":"event"}]);
+
+        // rinkeby
+        var MACSContract = myContract.at('0xcB6158F7979ce8D1c274291FB8b5dEc837214247');
+
+        // localhost 
+        // var MACSContract = myContract.at('0xc36f5626b70bd18015ee561ae074640cd99b0775');
+
+        var theHumanEvent = MACSContract.humanInfo({}, {fromBlock: 0, toBlock: 'latest'} );
+        theHumanEvent.watch((error, result) => {
+            if (result) {
+                if (result.blockHash != $("#insTrans").html()){
+                    $("#loader").hide();
+                }
+                        
+                $("#insTrans").html('Block hash: ' + result.blockHash);
+                $("#human").html(result.args.fName + '  ' + result.args.lName  + ' (' + result.args.age + ' years old)');
+
+            } else {
+                console.log(error);
+                $("#loader").hide();
+            }
+        });
+
+        MACSContract.countHumans((err, res) => {
+            console.log(res);
+            if (res)
+                $("#countIns").html(res.c + ' Humans');
+        });
+
+        MACSContract.getHumans((err, res) => {
+            console.log(res);
+        });
+
+        MACSContract.getHuman(web3.eth.defaultAccount, (err, res) => {
+            console.log(res);
+        });
+
+        $("#button").click(function() {
+            $("#loader").show();
+            // MACSContract.setHumanWithout(web3.eth.defaultAccount, $("#age").val(), $("#fName").val(), $("#lName").val(),(err, res) => {
+            //     console.log(res);
+            //     console.log(err);
+
+            // });
+
+            MACSContract.setHuman(web3.eth.defaultAccount, $("#age").val(), $("#fName").val(), $("#lName").val(),
+                {
+                    from: web3.eth.defaultAccount,
+                    gasLimit:3000000,
+                    gas:3000000
+                },
+                function (error, result){ //get callback from function which is your transaction key
+                        if(!error){
+                            console.log(result);
+                        } else{
+                            console.log(error);
+                        }
+                });
+        });
+    }
+
+    </script>
+
+</body>
+</html>

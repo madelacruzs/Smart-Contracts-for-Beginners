@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo Smart Contract Ethereum - Solidity</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="../node_modules/web3/dist/web3.min.js"></script>
+	<link rel='shortcut icon' type='image/x-icon' href='https://raw.githubusercontent.com/ethereum/ethereum-org/master/public/images/favicon.ico' />
+
+</head>
+<body>
+    <div class="container">
+        <h2 id="human"></h2>
+        <hr>
+        <small id="countIns"></small>
+        <br>
+        <small id="insTrans"></small>
+        <br>
+        <small >Tu nombre se registrará con el siguiente Ether Address: <b id="ethAddress"></b></small>
+        <hr>
+
+
+        <img id="loader" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif">
+
+        <label for="fName" class="col-lg-2 control-label">Nombre</label>
+        <input id="fName" type="text">
+
+        <label for="lName" class="col-lg-2 control-label">Apellidos</label>
+        <input id="lName" type="text">
+
+        <label for="age" class="col-lg-2 control-label">Edad</label>
+        <input id="age" type="text">
+
+        <button id="button">Actualizar </button>
+        <br>
+        <br>
+        <hr>
+        <label for="age" class="col-lg-2 control-label">Ether Address (Consulta tu Nombre)</label>
+        <input id="txtAddress" type="text">
+        <small id="get-human"></small>
+        <button id="buttonConsulta">Consultar </button>
+
+        <fieldset>
+            <legend>Datos del contrato | Red Ethereum: rinkeby</legend>
+            <span>Detalle del contrato y transacciones en etherscan: <a target="_blank" href="https://rinkeby.etherscan.io/address/0xcb6158f7979ce8d1c274291fb8b5dec837214247" > 0xcb6158f7979ce8d1c274291fb8b5dec837214247 </a></span>
+            <br />
+            <span>Nota: Para ejecutar el contrato se requiere tener instalado <b>Metamask</b> en <b>Chrome</b> en la red <b>rinkeby</b></span>
+            <br />
+            <small>Si deseas saber como instalar metamask, te recomiendo el siguiente <a target="_blank" href="https://www.youtube.com/watch?v=O7gjaZM3n74">Video</a></small>
+            <br />
+            <small>Si deseas obtener Ether gratis en rinkeby clic <a target="_blank" href="https://faucet.rinkeby.io/">aqui</a></small>
+
+        </fieldset>        
+    </div>
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="    crossorigin="anonymous"></script>
+    
+    <script>
+
+    window.addEventListener('load', function() {
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(Web3.currentProvider);
+        } else {
+             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+
+
+         loadMyDAPP();
+    });
+
+    function loadMyDAPP(){
+
+        web3.eth.defaultAccount =  web3.eth.accounts[0];
+        
+        $("#ethAddress").html(web3.eth.defaultAccount);
+        
+        var myContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_age","type":"uint256"},{"name":"_fName","type":"string"},{"name":"_lName","type":"string"}],"name":"setHumanWithout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_age","type":"uint256"},{"name":"_fName","type":"string"},{"name":"_lName","type":"string"}],"name":"setHuman","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_address","type":"address"}],"name":"getHuman","outputs":[{"name":"","type":"uint256"},{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getHumans","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"countHumans","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"humanAccts","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"fName","type":"string"},{"indexed":false,"name":"lName","type":"string"},{"indexed":false,"name":"age","type":"uint256"}],"name":"humanInfo","type":"event"}]);
+
+        // rinkeby
+        var MACSContract = myContract.at('0xe01a02e4fa95183eac5e49c3281d72fd564f2096');
+
+        var theHumanEvent = MACSContract.humanInfo({}, {fromBlock: 0, toBlock: 'latest'} );
+        theHumanEvent.watch((error, result) => {
+            if (result) {
+                if (result.blockHash != $("#insTrans").html()){
+                    $("#loader").hide();
+                }
+                        
+                $("#insTrans").html('Block hash: ' + result.blockHash);
+                $("#human").html('Último registro: ' + result.args.fName + '  ' + result.args.lName  + ' (' + result.args.age + ' añotes )');
+
+            } else {
+                console.log(error);
+                $("#loader").hide();
+            }
+        });
+
+        MACSContract.countHumans((err, res) => {
+            console.log(res);
+            if (res)
+                $("#countIns").html(res.c + ' Transacciones');
+        });
+
+        MACSContract.getHumans((err, res) => {
+            console.log(res);
+        });
+
+              
+        $("#buttonConsulta").click(function() {
+            MACSContract.getHuman($("#txtAddress").val(), (err, res) => {
+                $("#get-human").html('Eres: ' + res[1] + '  ' + res[2] + ' (' + res[0].c + ' añotes )');
+            });
+        });
+
+        $("#button").click(function() {
+            $("#loader").show();
+
+            MACSContract.setHuman(web3.eth.defaultAccount, $("#age").val(), $("#fName").val(), $("#lName").val(),
+                {
+                    from: web3.eth.defaultAccount,
+                    gasLimit:3000000,
+                    gas:3000000
+                },
+                function (error, result){ //get callback from function which is your transaction key
+                        if(!error){
+                            console.log(result);
+                            $("#age").val("");
+                            $("#fName").val("");
+                            $("#lName").val("");
+                        } else{
+                            console.log(error);
+                        }
+                });
+        });
+    }
+
+    </script>
+
+</body>
+</html>
